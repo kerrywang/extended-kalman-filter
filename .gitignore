@@ -6,7 +6,8 @@ build/
 
 # editor config
 .vscode/
-
+.idea/
+cmake-build-debug/
 # Xcode
 *.pbxuser
 !default.pbxuser

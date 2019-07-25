@@ -1,4 +1,4 @@
-#include "tools.h"
+#include "../include/tools.h"
 #include <iostream>
 
 using Eigen::VectorXd;
