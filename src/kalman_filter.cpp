@@ -47,17 +47,22 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   /**
    * TODO: update the state by using Extended Kalman Filter equations
    */
-   VectorXd z_pred = Tools::CartesianToPolar(x_);
-   VectorXd y = z - z_pred;
+    VectorXd z_pred(3);
+    z_pred = Tools::CartesianToPolar(x_);
+    VectorXd y = z - z_pred;
 
-   MatrixXd H_t = H_.transpose();
-   MatrixXd PH_t = P_ * H_t;
-   MatrixXd S = H_ * PH_t + R_;
-   MatrixXd K = PH_t * S.inverse();
+    // this is to account for case where the angle difference is out of range.
+    if (y(1) < -M_PI) {y(1) += 2 * M_PI;}
+    if (y(1) > M_PI) {y(1) -= 2 * M_PI;}
 
-   x_ = x_ + K * y;
-   MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());
-
-    P_ = (I - K * H_) * P_;
+    MatrixXd Ht = H_.transpose();
+    MatrixXd PHt =  P_ * Ht;
+    MatrixXd S = H_ * PHt + R_;
+    MatrixXd Si =S.inverse();
+    MatrixXd K =  PHt * Si;
+    x_ = x_ + (K * y);
+    long x_size = x_.size();
+    MatrixXd I = MatrixXd::Identity(x_size, x_size);
+    P_ = (I- K * H_) * P_;
 
 }

@@ -54,10 +54,12 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 Eigen::VectorXd Tools::CartesianToPolar(const Eigen::VectorXd& cart_coor) {
     VectorXd polar(3);
     double px = cart_coor[0], py = cart_coor[1], vx = cart_coor[2], vy = cart_coor[3];
-    double rho = sqrt(px * px + py * py);
-    double phi = std::atan2(px, py);
-    double rho_vel = (px * vx + py * vy) / rho;
-
+    double rho = 0, phi = 0, rho_vel = 0;
+    rho = sqrt(px * px + py * py);
+    if (fabs(rho) > 0.0001) {
+        phi = std::atan2(py, px);
+        rho_vel = (px * vx + py * vy) / rho;
+    }
     polar << rho, phi, rho_vel;
     return polar;
 }
